@@ -26,7 +26,7 @@ vi.mock('./hooks/useContacts', () => ({
     ],
     isLoading: false,
     error: null,
-    addContact: vi.fn((contact) => {
+    addContact: vi.fn(() => {
       // Mock implementation that doesn't actually add
     }),
     searchContacts: vi.fn(),
