@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "demo@example.com",
+      "name": "Demo User",
+      "password": "demo123"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "1761311848042",
+      "name": "Jatain Kumar",
+      "email": "jatainkumar7@gmail.com",
+      "phone": "6006782092",
+      "company": "IIT Kharagpur",
+      "createdAt": "2025-10-24T13:17:28.042Z"
+    }
+  ]
+}
