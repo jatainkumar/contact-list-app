@@ -1,25 +1,20 @@
 import { useState, useEffect } from 'react';
-import { mockContacts } from '../data/mockContacts';
+import { getContacts, createContact as apiCreateContact, deleteContact as apiDeleteContact } from '../services/api';
 
 export const useContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulate async data fetching with loading state
+  // Fetch contacts from backend
   useEffect(() => {
     const fetchContacts = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        
-        // Simulate potential network error (uncomment to test error state)
-        // throw new Error('Failed to fetch contacts from server');
-        
-        setContacts(mockContacts);
+        const data = await getContacts();
+        setContacts(data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch contacts'));
       } finally {
@@ -30,20 +25,15 @@ export const useContacts = () => {
     fetchContacts();
   }, []);
 
-  // Add contact function with ID generation
-  const addContact = (contactData) => {
+  // Add contact function
+  const addContact = async (contactData) => {
     try {
       // Validate contact data
       if (!contactData.name || !contactData.name.trim()) {
         throw new Error('Contact name is required');
       }
 
-      const newContact = {
-        ...contactData,
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-      };
-
+      const newContact = await apiCreateContact(contactData);
       setContacts((prevContacts) => [newContact, ...prevContacts]);
     } catch (err) {
       // Re-throw error to be handled by the form component
@@ -52,10 +42,16 @@ export const useContacts = () => {
   };
 
   // Delete contact function
-  const deleteContact = (id) => {
-    setContacts((prevContacts) => 
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const deleteContact = async (id) => {
+    try {
+      await apiDeleteContact(id);
+      setContacts((prevContacts) => 
+        prevContacts.filter((contact) => contact.id !== id)
+      );
+    } catch (err) {
+      console.error('Failed to delete contact:', err);
+      throw err;
+    }
   };
 
   // Search contacts function with case-insensitive filtering
