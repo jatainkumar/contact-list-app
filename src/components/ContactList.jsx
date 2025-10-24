@@ -1,13 +1,6 @@
-import { Contact } from '../types/contact';
 import { ContactCard } from './ContactCard';
 
-interface ContactListProps {
-  contacts: Contact[];
-  isLoading: boolean;
-  onDeleteContact: (id: string) => void;
-}
-
-export function ContactList({ contacts, isLoading, onDeleteContact }: ContactListProps) {
+export function ContactList({ contacts, isLoading, onDeleteContact }) {
   // Loading skeleton state with enhanced animation
   if (isLoading) {
     return (

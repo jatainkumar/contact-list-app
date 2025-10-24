@@ -1,9 +1,4 @@
-interface EmptyStateProps {
-  type: 'empty' | 'no-results';
-  searchQuery?: string;
-}
-
-export function EmptyState({ type, searchQuery }: EmptyStateProps) {
+export function EmptyState({ type, searchQuery }) {
   if (type === 'no-results') {
     return (
       <div 

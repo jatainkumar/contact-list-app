@@ -1,10 +1,4 @@
-interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}
-
-export function SearchBar({ value, onChange, placeholder = 'Search contacts by name...' }: SearchBarProps) {
+export function SearchBar({ value, onChange, placeholder = 'Search contacts by name...' }) {
   const handleClear = () => {
     onChange('');
   };

@@ -1,43 +1,25 @@
-import { useState, FormEvent } from 'react';
-import { Contact } from '../types/contact';
+import { useState } from 'react';
 
-interface AddContactFormProps {
-  onAddContact: (contact: Omit<Contact, 'id' | 'createdAt'>) => void;
-  onCancel?: () => void;
-}
-
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-}
-
-interface FormErrors {
-  name?: string;
-  email?: string;
-}
-
-export function AddContactForm({ onAddContact, onCancel }: AddContactFormProps) {
-  const [formData, setFormData] = useState<FormData>({
+export function AddContactForm({ onAddContact, onCancel }) {
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     company: '',
   });
 
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  const validateEmail = (email: string): boolean => {
+  const validateEmail = (email) => {
     if (!email) return true; // Email is optional
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  const validateForm = () => {
+    const newErrors = {};
 
     // Name is required
     if (!formData.name.trim()) {
@@ -53,7 +35,7 @@ export function AddContactForm({ onAddContact, onCancel }: AddContactFormProps) 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setShowSuccess(false);
     setShowError(false);
@@ -65,7 +47,7 @@ export function AddContactForm({ onAddContact, onCancel }: AddContactFormProps) 
 
     try {
       // Create contact object with only non-empty optional fields
-      const newContact: Omit<Contact, 'id' | 'createdAt'> = {
+      const newContact = {
         name: formData.name.trim(),
         ...(formData.email.trim() && { email: formData.email.trim() }),
         ...(formData.phone.trim() && { phone: formData.phone.trim() }),
@@ -112,10 +94,10 @@ export function AddContactForm({ onAddContact, onCancel }: AddContactFormProps) 
     }
   };
 
-  const handleChange = (field: keyof FormData, value: string) => {
+  const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error for this field when user starts typing
-    if (errors[field as keyof FormErrors]) {
+    if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
     setShowError(false);

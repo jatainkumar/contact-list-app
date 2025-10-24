@@ -1,20 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Contact } from '../types/contact';
 import { mockContacts } from '../data/mockContacts';
 
-interface UseContactsReturn {
-  contacts: Contact[];
-  isLoading: boolean;
-  error: Error | null;
-  addContact: (contact: Omit<Contact, 'id' | 'createdAt'>) => void;
-  deleteContact: (id: string) => void;
-  searchContacts: (query: string) => Contact[];
-}
-
-export const useContacts = (): UseContactsReturn => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+export const useContacts = () => {
+  const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Simulate async data fetching with loading state
   useEffect(() => {
@@ -41,20 +31,20 @@ export const useContacts = (): UseContactsReturn => {
   }, []);
 
   // Add contact function with ID generation
-  const addContact = (contactData: Omit<Contact, 'id' | 'createdAt'>) => {
+  const addContact = (contactData) => {
     try {
       // Validate contact data
       if (!contactData.name || !contactData.name.trim()) {
         throw new Error('Contact name is required');
       }
 
-      const newContact: Contact = {
+      const newContact = {
         ...contactData,
         id: crypto.randomUUID(),
         createdAt: new Date(),
       };
 
-      setContacts((prevContacts: Contact[]) => [newContact, ...prevContacts]);
+      setContacts((prevContacts) => [newContact, ...prevContacts]);
     } catch (err) {
       // Re-throw error to be handled by the form component
       throw err instanceof Error ? err : new Error('Failed to add contact');
@@ -62,14 +52,14 @@ export const useContacts = (): UseContactsReturn => {
   };
 
   // Delete contact function
-  const deleteContact = (id: string) => {
-    setContacts((prevContacts: Contact[]) => 
+  const deleteContact = (id) => {
+    setContacts((prevContacts) => 
       prevContacts.filter((contact) => contact.id !== id)
     );
   };
 
   // Search contacts function with case-insensitive filtering
-  const searchContacts = (query: string): Contact[] => {
+  const searchContacts = (query) => {
     try {
       // Handle null or undefined query
       if (!query || typeof query !== 'string') {
@@ -85,7 +75,7 @@ export const useContacts = (): UseContactsReturn => {
       const normalizedQuery = trimmedQuery.toLowerCase();
       
       // Filter contacts with safe name access
-      return contacts.filter((contact: Contact) => {
+      return contacts.filter((contact) => {
         if (!contact || !contact.name) {
           return false;
         }

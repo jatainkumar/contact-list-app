@@ -1,12 +1,10 @@
-import { Contact } from '../types/contact';
-
 /**
  * Filters contacts based on a search query matching against contact names
- * @param contacts - Array of contacts to filter
- * @param query - Search query string
- * @returns Filtered array of contacts matching the query
+ * @param {Array} contacts - Array of contacts to filter
+ * @param {string} query - Search query string
+ * @returns {Array} Filtered array of contacts matching the query
  */
-export function searchFilter(contacts: Contact[], query: string): Contact[] {
+export function searchFilter(contacts, query) {
   try {
     // Handle null or undefined contacts array
     if (!contacts || !Array.isArray(contacts)) {

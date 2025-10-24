@@ -40,7 +40,7 @@ function App() {
     }
   }, [contacts, searchQuery]);
 
-  const handleAddContact = (contactData: Parameters<typeof addContact>[0]) => {
+  const handleAddContact = (contactData) => {
     try {
       addContact(contactData);
       setShowAddForm(false);

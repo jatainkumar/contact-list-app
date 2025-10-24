@@ -1,13 +1,6 @@
-import { Contact } from '../types/contact';
-
-interface ContactCardProps {
-  contact: Contact;
-  onDelete: (id: string) => void;
-}
-
-export function ContactCard({ contact, onDelete }: ContactCardProps) {
+export function ContactCard({ contact, onDelete }) {
   // Generate initials from name for avatar
-  const getInitials = (name: string): string => {
+  const getInitials = (name) => {
     const parts = name.trim().split(' ');
     if (parts.length >= 2) {
       return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();

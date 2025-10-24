@@ -1,6 +1,4 @@
-import { Contact } from '../types/contact';
-
-export const mockContacts: Contact[] = [
+export const mockContacts = [
   {
     id: '1',
     name: 'Sarah Johnson',

@@ -1,6 +1,6 @@
 # Contact List Application
 
-A modern, responsive single-page React application for managing and viewing contacts. Built with TypeScript, React 18, and Tailwind CSS, this application demonstrates clean component architecture, custom hooks, and accessible UI design.
+A modern, responsive single-page React application for managing and viewing contacts. Built with JavaScript, React 18, and Tailwind CSS, this application demonstrates clean component architecture, custom hooks, and accessible UI design.
 
 ## 🚀 Live Demo
 
@@ -20,7 +20,7 @@ A modern, responsive single-page React application for managing and viewing cont
 
 ### Core Technologies
 - **React 18.2** - Modern React with functional components and hooks
-- **TypeScript 5.2** - Type-safe development with strict mode enabled
+- **JavaScript (ES2020)** - Modern JavaScript with ES modules
 - **Vite 5.0** - Lightning-fast build tool and development server
 
 ### Styling & UI
@@ -32,7 +32,7 @@ A modern, responsive single-page React application for managing and viewing cont
 
 ### Rationale for Technology Choices
 
-**React + TypeScript**: Provides type safety, excellent developer experience, and catches errors at compile time rather than runtime. TypeScript's strict mode ensures robust code quality.
+**React + JavaScript**: Provides excellent developer experience with modern JavaScript features. The codebase uses ES2020+ features including async/await, destructuring, and arrow functions for clean, readable code.
 
 **Vite**: Chosen over Create React App for significantly faster development server startup, hot module replacement (HMR), and optimized production builds. Vite's modern approach leverages native ES modules.
 
@@ -44,28 +44,25 @@ A modern, responsive single-page React application for managing and viewing cont
 contact-list-app/
 ├── src/
 │   ├── components/          # React components
-│   │   ├── AddContactForm.tsx
-│   │   ├── ContactCard.tsx
-│   │   ├── ContactList.tsx
-│   │   ├── EmptyState.tsx
-│   │   └── SearchBar.tsx
+│   │   ├── AddContactForm.jsx
+│   │   ├── ContactCard.jsx
+│   │   ├── ContactList.jsx
+│   │   ├── EmptyState.jsx
+│   │   └── SearchBar.jsx
 │   ├── hooks/               # Custom React hooks
-│   │   └── useContacts.ts
-│   ├── types/               # TypeScript type definitions
-│   │   └── contact.ts
+│   │   └── useContacts.js
 │   ├── data/                # Mock data
-│   │   └── mockContacts.ts
+│   │   └── mockContacts.js
 │   ├── utils/               # Utility functions
-│   │   └── searchFilter.ts
-│   ├── App.tsx              # Root component
-│   ├── main.tsx             # Application entry point
+│   │   └── searchFilter.js
+│   ├── App.jsx              # Root component
+│   ├── main.jsx             # Application entry point
 │   └── index.css            # Global styles with Tailwind
 ├── public/                  # Static assets
 ├── index.html               # HTML template
 ├── package.json             # Dependencies and scripts
-├── tsconfig.json            # TypeScript configuration
 ├── tailwind.config.js       # Tailwind CSS configuration
-├── vite.config.ts           # Vite configuration
+├── vite.config.js           # Vite configuration
 └── README.md                # This file
 ```
 
@@ -173,4 +170,4 @@ This is a demonstration project, but feedback and suggestions are welcome!
 
 ---
 
-Built with ❤️ using React, TypeScript, and Tailwind CSS
+Built with ❤️ using React, JavaScript, and Tailwind CSS
