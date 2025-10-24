@@ -7,11 +7,11 @@ A modern, full-stack contact management app built with React, Node.js, and Expre
 ## Features
 
 - 🔐 **Login System** - Demo login with authentication
-- 📇 **Contact Management** - Add, view, search, and delete contacts
+- �  **Contact Management** - Add, view, search, and delete contacts
 - 🌍 **International Phone Numbers** - Country code selector with 36+ countries
 - 🔍 **Real-time Search** - Instant contact filtering
-- 💾 **Persistent Storage** - Backend API with JSON database
-- 📱 **Responsive Design** - Works on all devices
+- � **Peersistent Storage** - Backend API with JSON database
+- � **Reesponsive Design** - Works on all devices
 - ♿ **Accessible** - WCAG AA compliant
 
 ## Tech Stack
