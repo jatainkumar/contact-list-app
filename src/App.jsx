@@ -4,11 +4,42 @@ import { SearchBar } from './components/SearchBar';
 import { AddContactForm } from './components/AddContactForm';
 import { ContactList } from './components/ContactList';
 import { EmptyState } from './components/EmptyState';
+import { LoginPage } from './components/LoginPage';
 
 function App() {
-  const { contacts, isLoading, error, addContact, deleteContact } = useContacts();
+  const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+
+  const handleLogin = (userData) => {
+    console.log('Login handler called with:', userData);
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setSearchQuery('');
+    setShowAddForm(false);
+  };
+
+  // Show login page if user is not logged in
+  if (!user) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  // Only load contacts after user is logged in
+  return <ContactsPage
+    user={user}
+    onLogout={handleLogout}
+    searchQuery={searchQuery}
+    setSearchQuery={setSearchQuery}
+    showAddForm={showAddForm}
+    setShowAddForm={setShowAddForm}
+  />;
+}
+
+function ContactsPage({ user, onLogout, searchQuery, setSearchQuery, showAddForm, setShowAddForm }) {
+  const { contacts, isLoading, error, addContact, deleteContact } = useContacts();
 
   // Implement search filtering logic using useMemo with error handling
   const filteredContacts = useMemo(() => {
@@ -25,7 +56,7 @@ function App() {
       }
 
       const normalizedQuery = trimmedQuery.toLowerCase();
-      
+
       // Filter contacts with safe access
       return contacts.filter((contact) => {
         if (!contact || !contact.name) {
@@ -64,6 +95,10 @@ function App() {
   const showNoResults = !isLoading && contacts.length > 0 && filteredContacts.length === 0;
   const showContactList = !isLoading && filteredContacts.length > 0;
 
+  const handleLogoutClick = () => {
+    onLogout();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Skip to main content link for keyboard navigation */}
@@ -97,33 +132,56 @@ function App() {
                   Contact List
                 </h1>
                 <p className="text-sm text-gray-500 mt-0.5">
-                  Manage your contacts with ease
+                  Welcome, {user.name}!
                 </p>
               </div>
             </div>
-            
-            {/* Add Contact Button with enhanced styling */}
-            <button
-              onClick={handleToggleForm}
-              className="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-              aria-label={showAddForm ? 'Close add contact form' : 'Add new contact'}
-              aria-expanded={showAddForm}
-            >
-              <svg
-                className={`w-5 h-5 mr-2 transition-transform duration-300 ${showAddForm ? 'rotate-45' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleToggleForm}
+                className="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                aria-label={showAddForm ? 'Close add contact form' : 'Add new contact'}
+                aria-expanded={showAddForm}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              {showAddForm ? 'Close Form' : 'Add Contact'}
-            </button>
+                <svg
+                  className={`w-5 h-5 mr-2 transition-transform duration-300 ${showAddForm ? 'rotate-45' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                {showAddForm ? 'Close Form' : 'Add Contact'}
+              </button>
+
+              <button
+                onClick={handleLogoutClick}
+                className="inline-flex items-center justify-center px-5 py-2.5 border-2 border-gray-200 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 shadow-sm hover:shadow"
+                aria-label="Logout"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -141,9 +199,8 @@ function App() {
 
         {/* Add Contact Form (Toggle Visibility) with smooth transition */}
         <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            showAddForm ? 'max-h-[800px] opacity-100 mb-8' : 'max-h-0 opacity-0'
-          }`}
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${showAddForm ? 'max-h-[800px] opacity-100 mb-8' : 'max-h-0 opacity-0'
+            }`}
           aria-hidden={!showAddForm}
         >
           <div className="max-w-2xl mx-auto">
