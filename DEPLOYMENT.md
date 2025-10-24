@@ -28,9 +28,18 @@ This guide shows how to deploy both frontend and backend to Vercel.
 
 **Install Command:** `npm install`
 
-### 3. Environment Variables (Optional)
+### 3. Environment Variables (Required)
 
-No environment variables needed for basic setup.
+Add MongoDB connection string:
+
+1. Click **"Environment Variables"**
+2. Add variable:
+   - **Name:** `MONGODB_URI`
+   - **Value:** Your MongoDB Atlas connection string
+   - **Environment:** Production, Preview, Development
+3. Click **"Save"**
+
+Get your connection string from MongoDB Atlas (see `server/MONGODB_SETUP.md`).
 
 ### 4. Deploy
 
@@ -53,14 +62,14 @@ All API calls are automatically routed:
 
 ### Important Notes
 
-⚠️ **Database Limitation:** The JSON file database resets on each deployment because Vercel serverless functions are stateless.
+⚠️ **Database:** The app now uses MongoDB Atlas for persistent storage.
 
-**For Production:** Consider using:
-- **Vercel KV** (Redis)
-- **Vercel Postgres**
-- **MongoDB Atlas**
-- **Supabase**
-- **PlanetScale**
+**Setup MongoDB:**
+1. Follow `server/MONGODB_SETUP.md` to create your database
+2. Add `MONGODB_URI` environment variable in Vercel:
+   - Go to Project Settings → Environment Variables
+   - Add: `MONGODB_URI=your_connection_string`
+3. Redeploy
 
 ## Alternative: Separate Deployments
 

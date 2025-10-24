@@ -1,101 +1,106 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import { connectDB } from './config/database.js';
+import Contact from './models/Contact.js';
+import User from './models/User.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Load environment variables
+dotenv.config();
 
 const app = express();
-const PORT = 3001;
-const DB_FILE = path.join(__dirname, 'db.json');
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Initialize database file if it doesn't exist
-async function initDB() {
+// Connect to MongoDB
+let dbConnected = false;
+connectDB().then(connected => {
+  dbConnected = connected;
+  if (connected) {
+    initializeData();
+  }
+});
+
+// Initialize sample data
+async function initializeData() {
   try {
-    await fs.access(DB_FILE);
-  } catch {
-    const initialData = {
-      users: [
+    // Check if demo user exists
+    const demoUser = await User.findOne({ email: 'demo@example.com' });
+    if (!demoUser) {
+      await User.create({
+        email: 'demo@example.com',
+        name: 'Demo User',
+        password: 'demo123'
+      });
+      console.log('✅ Demo user created');
+    }
+
+    // Check if contacts exist
+    const contactCount = await Contact.countDocuments();
+    if (contactCount === 0) {
+      const sampleContacts = [
         {
-          id: '1',
-          email: 'demo@example.com',
-          name: 'Demo User',
-          password: 'demo123'
-        }
-      ],
-      contacts: [
-        {
-          id: '1',
           name: 'Sarah Johnson',
           email: 'sarah.johnson@techcorp.com',
           phone: '+1 (555) 123-4567',
-          company: 'TechCorp Solutions',
-          createdAt: new Date('2024-01-15').toISOString()
+          company: 'TechCorp Solutions'
         },
         {
-          id: '2',
           name: 'Michael Chen',
           email: 'mchen@innovatelab.io',
           phone: '+1 (555) 234-5678',
-          company: 'InnovateLab',
-          createdAt: new Date('2024-02-20').toISOString()
+          company: 'InnovateLab'
         },
         {
-          id: '3',
           name: 'Emily Rodriguez',
           email: 'emily.r@designstudio.com',
           phone: '+1 (555) 345-6789',
-          company: 'Creative Design Studio',
-          createdAt: new Date('2024-03-10').toISOString()
+          company: 'Creative Design Studio'
         }
-      ]
-    };
-    await fs.writeFile(DB_FILE, JSON.stringify(initialData, null, 2));
-    console.log('Database initialized');
+      ];
+      
+      await Contact.insertMany(sampleContacts);
+      console.log('✅ Sample contacts created');
+    }
+  } catch (error) {
+    console.error('Error initializing data:', error.message);
   }
-}
-
-// Read database
-async function readDB() {
-  const data = await fs.readFile(DB_FILE, 'utf-8');
-  return JSON.parse(data);
-}
-
-// Write database
-async function writeDB(data) {
-  await fs.writeFile(DB_FILE, JSON.stringify(data, null, 2));
 }
 
 // Routes
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Server is running',
+    database: dbConnected ? 'connected' : 'disconnected'
+  });
 });
 
 // Login
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const db = await readDB();
     
-    const user = db.users.find(u => u.email === email);
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+    
+    const user = await User.findOne({ email });
     
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
     // For demo purposes, accept any password for demo user
-    // In production, use proper password hashing
+    // In production, use proper password hashing (bcrypt)
     if (email === 'demo@example.com' || user.password === password) {
       res.json({
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name
       });
@@ -103,6 +108,7 @@ app.post('/api/login', async (req, res) => {
       res.status(401).json({ error: 'Invalid credentials' });
     }
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -110,9 +116,14 @@ app.post('/api/login', async (req, res) => {
 // Get all contacts
 app.get('/api/contacts', async (req, res) => {
   try {
-    const db = await readDB();
-    res.json(db.contacts);
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+    
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json(contacts);
   } catch (error) {
+    console.error('Get contacts error:', error);
     res.status(500).json({ error: 'Failed to fetch contacts' });
   }
 });
@@ -120,8 +131,11 @@ app.get('/api/contacts', async (req, res) => {
 // Get single contact
 app.get('/api/contacts/:id', async (req, res) => {
   try {
-    const db = await readDB();
-    const contact = db.contacts.find(c => c.id === req.params.id);
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+    
+    const contact = await Contact.findById(req.params.id);
     
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
@@ -129,6 +143,7 @@ app.get('/api/contacts/:id', async (req, res) => {
     
     res.json(contact);
   } catch (error) {
+    console.error('Get contact error:', error);
     res.status(500).json({ error: 'Failed to fetch contact' });
   }
 });
@@ -136,18 +151,16 @@ app.get('/api/contacts/:id', async (req, res) => {
 // Create contact
 app.post('/api/contacts', async (req, res) => {
   try {
-    const db = await readDB();
-    const newContact = {
-      id: Date.now().toString(),
-      ...req.body,
-      createdAt: new Date().toISOString()
-    };
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     
-    db.contacts.push(newContact);
-    await writeDB(db);
+    const newContact = new Contact(req.body);
+    await newContact.save();
     
     res.status(201).json(newContact);
   } catch (error) {
+    console.error('Create contact error:', error);
     res.status(500).json({ error: 'Failed to create contact' });
   }
 });
@@ -155,22 +168,23 @@ app.post('/api/contacts', async (req, res) => {
 // Update contact
 app.put('/api/contacts/:id', async (req, res) => {
   try {
-    const db = await readDB();
-    const index = db.contacts.findIndex(c => c.id === req.params.id);
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     
-    if (index === -1) {
+    const contact = await Contact.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    
+    if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
     }
     
-    db.contacts[index] = {
-      ...db.contacts[index],
-      ...req.body,
-      id: req.params.id
-    };
-    
-    await writeDB(db);
-    res.json(db.contacts[index]);
+    res.json(contact);
   } catch (error) {
+    console.error('Update contact error:', error);
     res.status(500).json({ error: 'Failed to update contact' });
   }
 });
@@ -178,43 +192,37 @@ app.put('/api/contacts/:id', async (req, res) => {
 // Delete contact
 app.delete('/api/contacts/:id', async (req, res) => {
   try {
-    const db = await readDB();
-    const index = db.contacts.findIndex(c => c.id === req.params.id);
+    if (!dbConnected) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
     
-    if (index === -1) {
+    const contact = await Contact.findByIdAndDelete(req.params.id);
+    
+    if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
     }
     
-    db.contacts.splice(index, 1);
-    await writeDB(db);
-    
     res.json({ message: 'Contact deleted successfully' });
   } catch (error) {
+    console.error('Delete contact error:', error);
     res.status(500).json({ error: 'Failed to delete contact' });
   }
 });
 
 // Start server (only in development)
-async function startServer() {
-  await initDB();
-  
-  // Only start server if not in Vercel serverless environment
-  if (process.env.VERCEL !== '1') {
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-      console.log(`API endpoints:`);
-      console.log(`  GET    /api/health`);
-      console.log(`  POST   /api/login`);
-      console.log(`  GET    /api/contacts`);
-      console.log(`  POST   /api/contacts`);
-      console.log(`  GET    /api/contacts/:id`);
-      console.log(`  PUT    /api/contacts/:id`);
-      console.log(`  DELETE /api/contacts/:id`);
-    });
-  }
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📡 API endpoints:`);
+    console.log(`  GET    /api/health`);
+    console.log(`  POST   /api/login`);
+    console.log(`  GET    /api/contacts`);
+    console.log(`  POST   /api/contacts`);
+    console.log(`  GET    /api/contacts/:id`);
+    console.log(`  PUT    /api/contacts/:id`);
+    console.log(`  DELETE /api/contacts/:id`);
+  });
 }
-
-startServer();
 
 // Export for Vercel serverless
 export default app;

@@ -40,7 +40,22 @@ npm install
 cd ..
 ```
 
-### 2. Run the Application
+### 2. Configure MongoDB
+
+Create `server/.env` file:
+```bash
+cd server
+cp .env.example .env
+```
+
+Add your MongoDB Atlas connection string to `.env`:
+```
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/contactlist
+```
+
+See `server/MONGODB_SETUP.md` for detailed setup instructions.
+
+### 3. Run the Application
 
 **Terminal 1 - Backend:**
 ```bash
@@ -55,7 +70,7 @@ npm run dev
 ```
 Frontend runs on `http://localhost:5173`
 
-### 3. Login
+### 4. Login
 
 Click **"Try Demo Login (Click Here!)"** button to access the app instantly.
 
@@ -104,7 +119,9 @@ npm run build
 
 ## Database
 
-Data is stored in `server/db.json` and automatically created with sample contacts on first run.
+Uses **MongoDB Atlas** for persistent cloud storage. See `server/MONGODB_SETUP.md` for setup instructions.
+
+For local development without MongoDB, the app will show an error. Set up MongoDB Atlas (free tier) to get started.
 
 ## Deployment
 
