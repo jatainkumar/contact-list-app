@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.PROD 
+  ? '/api'  // Production: use relative path
+  : 'http://localhost:3001/api';  // Development: use localhost
 
 // Login
 export async function login(email, password) {

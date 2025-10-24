@@ -194,20 +194,27 @@ app.delete('/api/contacts/:id', async (req, res) => {
   }
 });
 
-// Start server
+// Start server (only in development)
 async function startServer() {
   await initDB();
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`API endpoints:`);
-    console.log(`  GET    /api/health`);
-    console.log(`  POST   /api/login`);
-    console.log(`  GET    /api/contacts`);
-    console.log(`  POST   /api/contacts`);
-    console.log(`  GET    /api/contacts/:id`);
-    console.log(`  PUT    /api/contacts/:id`);
-    console.log(`  DELETE /api/contacts/:id`);
-  });
+  
+  // Only start server if not in Vercel serverless environment
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`API endpoints:`);
+      console.log(`  GET    /api/health`);
+      console.log(`  POST   /api/login`);
+      console.log(`  GET    /api/contacts`);
+      console.log(`  POST   /api/contacts`);
+      console.log(`  GET    /api/contacts/:id`);
+      console.log(`  PUT    /api/contacts/:id`);
+      console.log(`  DELETE /api/contacts/:id`);
+    });
+  }
 }
 
 startServer();
+
+// Export for Vercel serverless
+export default app;
