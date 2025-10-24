@@ -4,7 +4,7 @@ A modern, responsive single-page React application for managing and viewing cont
 
 ## 🚀 Live Demo
 
-**Deployed Application:** contact-app-jatain.vercel.app
+**Deployed Application:** [contact-app-jatain.vercel.app](https://contact-lapp-jatain.vercel.app/)
 
 ## ✨ Features
 
