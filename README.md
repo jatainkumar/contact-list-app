@@ -4,7 +4,7 @@ A modern, responsive single-page React application for managing and viewing cont
 
 ## 🚀 Live Demo
 
-**Deployed Application:** [Coming Soon - Deployment URL will be added here]
+**Deployed Application:** contact-app-jatain.vercel.app
 
 ## ✨ Features
 
@@ -29,8 +29,6 @@ A modern, responsive single-page React application for managing and viewing cont
 
 ### Development Tools
 - **ESLint** - Code quality and consistency enforcement
-- **Vitest** - Fast unit testing framework
-- **React Testing Library** - Component testing utilities
 
 ### Rationale for Technology Choices
 
@@ -39,8 +37,6 @@ A modern, responsive single-page React application for managing and viewing cont
 **Vite**: Chosen over Create React App for significantly faster development server startup, hot module replacement (HMR), and optimized production builds. Vite's modern approach leverages native ES modules.
 
 **Tailwind CSS**: Enables rapid UI development with utility classes, ensures consistent design system, and produces minimal CSS in production through purging unused styles. Eliminates the need for separate CSS files and naming conventions.
-
-**Vitest**: Native integration with Vite, faster test execution than Jest, and compatible with React Testing Library for comprehensive component testing.
 
 ## 📁 Project Structure
 
@@ -104,7 +100,6 @@ The application will open at `http://localhost:5173` (or another port if 5173 is
 - `npm run build` - Build optimized production bundle (outputs to `dist/`)
 - `npm run preview` - Preview production build locally
 - `npm run lint` - Run ESLint to check code quality
-- `npm run test` - Run test suite with Vitest
 
 ## 🎨 Design Decisions & Assumptions
 
@@ -112,7 +107,7 @@ The application will open at `http://localhost:5173` (or another port if 5173 is
 
 **Component-Based Architecture**: The application is broken down into small, reusable components (ContactCard, SearchBar, etc.) following the single responsibility principle. Each component has a clear, focused purpose.
 
-**Custom Hooks Pattern**: Business logic is extracted into the `useContacts` custom hook, separating data management from UI rendering. This makes the code more testable and reusable.
+**Custom Hooks Pattern**: Business logic is extracted into the `useContacts` custom hook, separating data management from UI rendering. This makes the code more reusable.
 
 **Mocked Data with Simulated API**: Rather than connecting to a real backend, the application uses mock data with simulated async behavior (loading states) to demonstrate realistic API interaction patterns without requiring backend infrastructure.
 
@@ -147,18 +142,6 @@ The application will open at `http://localhost:5173` (or another port if 5173 is
 - Email and phone validation is basic (format checking only, not verification)
 - No authentication or user accounts are required
 - The application is for demonstration purposes and doesn't require production-grade error tracking or analytics
-
-## 🧪 Testing
-
-The application includes comprehensive test coverage for components and functionality:
-
-```bash
-npm run test
-```
-
-Tests cover:
-- Component rendering and props
-- Search filtering logic
 - Form validation
 - User interactions
 - Empty state handling

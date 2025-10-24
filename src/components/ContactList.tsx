@@ -4,9 +4,10 @@ import { ContactCard } from './ContactCard';
 interface ContactListProps {
   contacts: Contact[];
   isLoading: boolean;
+  onDeleteContact: (id: string) => void;
 }
 
-export function ContactList({ contacts, isLoading }: ContactListProps) {
+export function ContactList({ contacts, isLoading, onDeleteContact }: ContactListProps) {
   // Loading skeleton state with enhanced animation
   if (isLoading) {
     return (
@@ -60,7 +61,7 @@ export function ContactList({ contacts, isLoading }: ContactListProps) {
           className="animate-slideUp"
           role="listitem"
         >
-          <ContactCard contact={contact} />
+          <ContactCard contact={contact} onDelete={onDeleteContact} />
         </div>
       ))}
     </div>

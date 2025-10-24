@@ -7,6 +7,7 @@ interface UseContactsReturn {
   isLoading: boolean;
   error: Error | null;
   addContact: (contact: Omit<Contact, 'id' | 'createdAt'>) => void;
+  deleteContact: (id: string) => void;
   searchContacts: (query: string) => Contact[];
 }
 
@@ -60,6 +61,13 @@ export const useContacts = (): UseContactsReturn => {
     }
   };
 
+  // Delete contact function
+  const deleteContact = (id: string) => {
+    setContacts((prevContacts: Contact[]) => 
+      prevContacts.filter((contact) => contact.id !== id)
+    );
+  };
+
   // Search contacts function with case-insensitive filtering
   const searchContacts = (query: string): Contact[] => {
     try {
@@ -95,6 +103,7 @@ export const useContacts = (): UseContactsReturn => {
     isLoading,
     error,
     addContact,
+    deleteContact,
     searchContacts,
   };
 };

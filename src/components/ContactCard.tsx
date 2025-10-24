@@ -2,9 +2,10 @@ import { Contact } from '../types/contact';
 
 interface ContactCardProps {
   contact: Contact;
+  onDelete: (id: string) => void;
 }
 
-export function ContactCard({ contact }: ContactCardProps) {
+export function ContactCard({ contact, onDelete }: ContactCardProps) {
   // Generate initials from name for avatar
   const getInitials = (name: string): string => {
     const parts = name.trim().split(' ');
@@ -15,6 +16,12 @@ export function ContactCard({ contact }: ContactCardProps) {
   };
 
   const initials = getInitials(contact.name);
+
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete ${contact.name}?`)) {
+      onDelete(contact.id);
+    }
+  };
 
   return (
     <article 
@@ -41,9 +48,31 @@ export function ContactCard({ contact }: ContactCardProps) {
 
         {/* Contact Information with enhanced typography */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-bold text-gray-900 truncate mb-3 group-hover:text-blue-600 group-focus-within:text-blue-600 transition-colors duration-200">
-            {contact.name}
-          </h3>
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <h3 className="text-lg font-bold text-gray-900 truncate group-hover:text-blue-600 group-focus-within:text-blue-600 transition-colors duration-200">
+              {contact.name}
+            </h3>
+            <button
+              onClick={handleDelete}
+              className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+              aria-label={`Delete ${contact.name}`}
+              title="Delete contact"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
 
           <div className="space-y-2">
             {contact.email && (

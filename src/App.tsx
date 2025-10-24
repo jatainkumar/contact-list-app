@@ -6,7 +6,7 @@ import { ContactList } from './components/ContactList';
 import { EmptyState } from './components/EmptyState';
 
 function App() {
-  const { contacts, isLoading, error, addContact } = useContacts();
+  const { contacts, isLoading, error, addContact, deleteContact } = useContacts();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -210,7 +210,7 @@ function App() {
           {/* Loading State */}
           {isLoading && (
             <div role="status" aria-live="polite">
-              <ContactList contacts={[]} isLoading={true} />
+              <ContactList contacts={[]} isLoading={true} onDeleteContact={deleteContact} />
             </div>
           )}
 
@@ -231,7 +231,7 @@ function App() {
           {/* Contact List with Filtered Contacts */}
           {showContactList && (
             <div role="region" aria-live="polite" aria-atomic="false">
-              <ContactList contacts={filteredContacts} isLoading={false} />
+              <ContactList contacts={filteredContacts} isLoading={false} onDeleteContact={deleteContact} />
             </div>
           )}
         </main>
